@@ -45,4 +45,49 @@ router.get("/me", requireAuth, (req, res) => {
   res.json({ user: req.user });
 });
 
+// GET /api/auth/security-question/:username - fetch the question to display
+router.get("/security-question/:username", async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username.trim().toLowerCase() });
+    if (!user || !user.securityQuestion) {
+      return res.status(404).json({ message: "No recovery question set up for that username" });
+    }
+    res.json({ question: user.securityQuestion });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/auth/reset-with-answer
+router.post("/reset-with-answer", async (req, res) => {
+  try {
+    const { username, answer, newPassword } = req.body;
+
+    if (!username || !answer || !newPassword) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await User.findOne({ username: username.trim().toLowerCase() });
+    if (!user || !user.securityAnswerHash) {
+      return res.status(400).json({ message: "Incorrect answer" });
+    }
+
+    const valid = await bcrypt.compare(answer.trim().toLowerCase(), user.securityAnswerHash);
+    if (!valid) {
+      return res.status(400).json({ message: "Incorrect answer" });
+    }
+
+    user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password updated - you can now log in with your new password" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 export default router;

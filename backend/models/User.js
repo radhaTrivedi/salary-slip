@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema(
       enum: ["admin"],
       default: "admin",
     },
+     securityQuestion: {
+      type: String,
+      default: "",
+    },
+    securityAnswerHash: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

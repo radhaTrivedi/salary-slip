@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import ForgotPassword from "./pages/ForgotPassword";
 import AddSalary from "./pages/AddSalary";
 
 export default function App() {
@@ -12,6 +13,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
           path="/*"
           element={
@@ -71,10 +73,21 @@ function MobileTopBar() {
         <img src="/logo.png" alt="ROBO+" className="h-6 w-auto" />
       </div>
       <nav className="flex items-center gap-4 text-sm">
-        <NavLink to="/" end className={({ isActive }) => (isActive ? "text-white" : "text-ink-300")}>
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            isActive ? "text-white" : "text-ink-300"
+          }
+        >
           Employees
         </NavLink>
-        <NavLink to="/add-slip" className={({ isActive }) => (isActive ? "text-white" : "text-ink-300")}>
+        <NavLink
+          to="/add-slip"
+          className={({ isActive }) =>
+            isActive ? "text-white" : "text-ink-300"
+          }
+        >
           + Slip
         </NavLink>
         <button onClick={handleLogout} className="text-ink-300">
