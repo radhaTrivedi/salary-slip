@@ -13,10 +13,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role: {
+     role: {
       type: String,
-      enum: ["admin"],
+      enum: ["admin", "employee"],
       default: "admin",
+    },
+    employeeRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+      default: null,
     },
      securityQuestion: {
       type: String,

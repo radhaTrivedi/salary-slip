@@ -8,6 +8,8 @@ import employeeRoutes from "./routes/employees.js";
 import salaryRoutes from "./routes/salary.js";
 import requireAuth from "./middleware/auth.js";
 import { seedFirstAdmin } from "./scripts/seedAdmin.js";
+import employeeLoginRoutes from "./routes/employeeLogins.js";
+import requireAdmin from "./middleware/requireAdmin.js";
 
 dotenv.config();
 
@@ -23,8 +25,12 @@ app.get("/api/health", (req, res) => {
 });
 
 // Everything below requires a logged-in admin
-app.use("/api/employees", requireAuth, employeeRoutes);
+// app.use("/api/employees", requireAuth, employeeRoutes);
+// app.use("/api/salary", requireAuth, salaryRoutes);
+
+app.use("/api/employees", requireAuth, requireAdmin, employeeRoutes);
 app.use("/api/salary", requireAuth, salaryRoutes);
+app.use("/api/employee-logins", requireAuth, requireAdmin, employeeLoginRoutes);
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/salary_system";

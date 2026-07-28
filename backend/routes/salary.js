@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import SalarySlip from "../models/SalarySlip.js";
 import Employee from "../models/Employee.js";
+import requireAdmin from "../middleware/requireAdmin.js";
 
 const router = express.Router();
 
@@ -27,8 +28,24 @@ function calculateSlip({ basicSalary, workingDays, fullDays, halfDays, travelExp
 }
 
 // GET /api/salary/employee/:employeeId - all slips for one employee, newest first
+// router.get("/employee/:employeeId", async (req, res) => {
+//   try {
+//     const slips = await SalarySlip.find({ employee: req.params.employeeId }).sort({
+//       year: -1,
+//       createdAt: -1,
+//     });
+//     res.json(slips);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.get("/employee/:employeeId", async (req, res) => {
   try {
+    if (req.user.role === "employee" && req.user.employeeId !== req.params.employeeId) {
+      return res.status(403).json({ message: "You can only view your own salary slips" });
+    }
+
     const slips = await SalarySlip.find({ employee: req.params.employeeId }).sort({
       year: -1,
       createdAt: -1,
@@ -40,10 +57,25 @@ router.get("/employee/:employeeId", async (req, res) => {
 });
 
 // GET /api/salary/:id - single slip
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const slip = await SalarySlip.findById(req.params.id);
+//     if (!slip) return res.status(404).json({ message: "Salary slip not found" });
+//     res.json(slip);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
+
 router.get("/:id", async (req, res) => {
   try {
     const slip = await SalarySlip.findById(req.params.id);
     if (!slip) return res.status(404).json({ message: "Salary slip not found" });
+
+    if (req.user.role === "employee" && req.user.employeeId !== slip.employee.toString()) {
+      return res.status(403).json({ message: "You can only view your own salary slips" });
+    }
+
     res.json(slip);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -51,7 +83,8 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /api/salary - create a new month-wise slip
-router.post("/", async (req, res) => {
+// router.post("/", async (req, res) => {
+router.post("/", requireAdmin, async (req, res) => {
   try {
     const {
       employee,
@@ -123,7 +156,8 @@ router.post("/", async (req, res) => {
 });
 
 // DELETE /api/salary/:id
-router.delete("/:id", async (req, res) => {
+// router.delete("/:id", async (req, res) => {          
+router.delete("/:id", requireAdmin, async (req, res) => {       
   try {
     const slip = await SalarySlip.findByIdAndDelete(req.params.id);
     if (!slip) return res.status(404).json({ message: "Salary slip not found" });
