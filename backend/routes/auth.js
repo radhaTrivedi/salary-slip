@@ -71,16 +71,27 @@ router.post("/login", async (req, res) => {
       }
     }
 
+    // const token = jwt.sign(
+    //   {
+    //     id: user._id,
+    //     username: user.username,
+    //     role: user.role,
+    //     employeeId: employeeInfo ? employeeInfo.id : null,
+    //   },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "7d" }
+    // );
+
     const token = jwt.sign(
-      {
-        id: user._id,
-        username: user.username,
-        role: user.role,
-        employeeId: employeeInfo ? employeeInfo.id : null,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+  {
+    id: user._id,
+    username: user.username,
+    role: user.role,
+    employeeId: employeeInfo ? employeeInfo.id : null,
+  },
+  "7cca89d2f7d23e3b79f57438759aa3c0ebd5b225f18956ba72fa9b496beda796d076fb36dd7d3a93f312c14c7e07e7b2",
+  { expiresIn: "7d" }
+);
 
     res.json({
       token,
