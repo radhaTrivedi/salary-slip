@@ -13,7 +13,10 @@ if (!username || !question || !answer) {
   process.exit(1);
 }
 
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/salary_system";
+// const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/salary_system";
+
+const MONGO_URI =
+  "mongodb://radha17trivedi_db_user:Radha123456@ac-p8izshz-shard-00-00.klyaukl.mongodb.net:27017,ac-p8izshz-shard-00-01.klyaukl.mongodb.net:27017,ac-p8izshz-shard-00-02.klyaukl.mongodb.net:27017/salary_system?ssl=true&replicaSet=atlas-leaa4s-shard-0&authSource=admin&retryWrites=true&w=majority&appName=salary-count";
 
 mongoose
   .connect(MONGO_URI)

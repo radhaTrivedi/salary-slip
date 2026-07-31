@@ -116,7 +116,8 @@ import requireAdmin from "./middleware/requireAdmin.js";
 // Hardcoded config (no .env / process.env used)
 const MONGO_URI =
   "mongodb://radha17trivedi_db_user:Radha123456@ac-p8izshz-shard-00-00.klyaukl.mongodb.net:27017,ac-p8izshz-shard-00-01.klyaukl.mongodb.net:27017,ac-p8izshz-shard-00-02.klyaukl.mongodb.net:27017/salary_system?ssl=true&replicaSet=atlas-leaa4s-shard-0&authSource=admin&retryWrites=true&w=majority&appName=salary-count";
-const PORT = 5000;
+
+  const PORT = 5000;
 export const JWT_SECRET =
   "7cca89d2f7d23e3b79f57438759aa3c0ebd5b225f18956ba72fa9b496beda796d076fb36dd7d3a93f312c14c7e07e7b2";
 
