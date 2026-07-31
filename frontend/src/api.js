@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
-  baseURL: "https://salary-slip-mdsheeifx-radha17.vercel.app/api",
+  baseURL: "https://salary-slip-mauve.vercel.app/api",
   headers: { "Content-Type": "application/json" },
 });
 
