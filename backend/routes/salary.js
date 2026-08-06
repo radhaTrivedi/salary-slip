@@ -67,6 +67,41 @@ router.get("/employee/:employeeId", async (req, res) => {
 //   }
 // });
 
+
+
+// GET /api/salary/report/company - month-wise total salary paid across
+// ALL employees, for the admin's company-wide spending view.
+// IMPORTANT: this must stay ABOVE the "/:id" route below, otherwise
+// Express will treat "report" as an :id value and this will never run.
+router.get("/report/company", requireAdmin, async (req, res) => {
+  try {
+    const results = await SalarySlip.aggregate([
+      {
+        $group: {
+          _id: { month: "$month", year: "$year" },
+          totalFinalSalary: { $sum: "$finalSalary" },
+          totalGrossSalary: { $sum: "$grossSalary" },
+          employeeCount: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: "$_id.month",
+          year: "$_id.year",
+          totalFinalSalary: 1,
+          totalGrossSalary: 1,
+          employeeCount: 1,
+        },
+      },
+    ]);
+
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try {
     const slip = await SalarySlip.findById(req.params.id);
