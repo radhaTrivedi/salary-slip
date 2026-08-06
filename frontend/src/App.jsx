@@ -1,4 +1,10 @@
-import { Routes, Route, NavLink, useNavigate ,Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  NavLink,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -11,6 +17,7 @@ import AddSalary from "./pages/AddSalary";
 import ManageAdmins from "./pages/ManageAdmins"; // if not already there
 import ManageEmployeeLogins from "./pages/ManageEmployeeLogins";
 import MySalarySlips from "./pages/MySalarySlips";
+import AdminSalaryReport from "./pages/AdminSalaryReport";
 
 export default function App() {
   return (
@@ -67,7 +74,12 @@ function AppShell() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/add-slip" element={<AddSalary />} />
               <Route path="/manage-admins" element={<ManageAdmins />} />
-              <Route path="/manage-employee-logins" element={<ManageEmployeeLogins />} />
+              <Route
+                path="/manage-employee-logins"
+                element={<ManageEmployeeLogins />}
+              />
+
+              <Route path="/admin/reports" element={<AdminSalaryReport />} />
             </>
           )}
         </Routes>

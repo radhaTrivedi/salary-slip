@@ -103,6 +103,15 @@ export default function Sidebar() {
             >
               <IconPlus /> Add admin
             </NavLink>
+
+            <NavLink
+              to="/admin/reports"
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? "bg-white/10 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white"}`
+              }
+            >
+              <IconChart /> Salary reports
+            </NavLink>
           </>
         )}
       </nav>
@@ -130,6 +139,22 @@ export default function Sidebar() {
         )}
       </div>
     </aside>
+  );
+}
+
+function IconChart() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    >
+      <path d="M3 3v18h18" />
+      <path d="M7 15l4-4 3 3 5-6" />
+    </svg>
   );
 }
 
