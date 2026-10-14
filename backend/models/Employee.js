@@ -26,6 +26,10 @@ const employeeSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+        parentsNumber: {
+      type: String,
+      trim: true,
+    },
     joiningDate: {
       type: Date,
       default: Date.now,
