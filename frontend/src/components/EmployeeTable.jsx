@@ -1,4 +1,5 @@
 import { initials, accentFor } from "../lib/helpers";
+import EmployeeActions from "./EmployeeActions";
 
 const accentStyles = {
   ledger: "bg-ledger-100 text-ledger-600",
@@ -7,7 +8,7 @@ const accentStyles = {
   rust: "bg-rust-100 text-rust-600",
 };
 
-export default function EmployeeTable({ employees, onOpen }) {
+export default function EmployeeTable({ employees, onOpen, onEdit, onDelete }) {
   return (
     <div className="bg-paper-50 border border-paper-300 rounded-xl overflow-hidden">
       <table className="w-full text-sm">
@@ -18,6 +19,9 @@ export default function EmployeeTable({ employees, onOpen }) {
             <th className="px-5 py-3 font-medium hidden sm:table-cell">Department</th>
             <th className="px-5 py-3 font-medium hidden md:table-cell">Email</th>
             <th className="px-5 py-3 font-medium text-right">Slips</th>
+            <th className="px-3 py-3 font-medium text-right">
+              <span className="sr-only">Actions</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +45,11 @@ export default function EmployeeTable({ employees, onOpen }) {
               <td className="px-5 py-3.5 text-ink-500 hidden sm:table-cell">{emp.department || "General"}</td>
               <td className="px-5 py-3.5 text-ink-500 hidden md:table-cell">{emp.email || "—"}</td>
               <td className="px-5 py-3.5 text-right font-mono text-ledger-600">View &rarr;</td>
+              <td className="px-3 py-2.5">
+                <div className="flex justify-end">
+                  <EmployeeActions employee={emp} onEdit={onEdit} onDelete={onDelete} />
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>

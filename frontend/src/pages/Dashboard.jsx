@@ -4,6 +4,8 @@ import api from "../api";
 import EmployeeCard from "../components/EmployeeCard";
 import EmployeeTable from "../components/EmployeeTable";
 import AddEmployeeModal from "../components/AddEmployeeModal";
+import EditEmployeeModal from "../components/EditEmployeeModal";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 import SalarySlipModal from "../components/SalarySlipModal";
 
 export default function Dashboard() {
@@ -13,6 +15,9 @@ export default function Dashboard() {
   const [query, setQuery] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [activeEmployee, setActiveEmployee] = useState(null);
+  const [editTarget, setEditTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadEmployees();
@@ -25,6 +30,21 @@ export default function Dashboard() {
       .then(({ data }) => setEmployees(data))
       .catch(() => toast.error("Could not load employees"))
       .finally(() => setLoading(false));
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/employees/${deleteTarget._id}`);
+      setEmployees((list) => list.filter((e) => e._id !== deleteTarget._id));
+      toast.success(`${deleteTarget.name} was deleted`);
+      setDeleteTarget(null);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Could not delete employee");
+    } finally {
+      setDeleting(false);
+    }
   }
 
   const filtered = useMemo(() => {
@@ -73,17 +93,43 @@ export default function Dashboard() {
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((emp) => (
-            <EmployeeCard key={emp._id} employee={emp} onOpen={setActiveEmployee} />
+            <EmployeeCard
+              key={emp._id}
+              employee={emp}
+              onOpen={setActiveEmployee}
+              onEdit={setEditTarget}
+              onDelete={setDeleteTarget}
+            />
           ))}
         </div>
       ) : (
-        <EmployeeTable employees={filtered} onOpen={setActiveEmployee} />
+        <EmployeeTable
+          employees={filtered}
+          onOpen={setActiveEmployee}
+          onEdit={setEditTarget}
+          onDelete={setDeleteTarget}
+        />
       )}
 
       <AddEmployeeModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
         onCreated={(emp) => setEmployees((list) => [emp, ...list])}
+      />
+
+      <EditEmployeeModal
+        employee={editTarget}
+        onClose={() => setEditTarget(null)}
+        onUpdated={(updated) =>
+          setEmployees((list) => list.map((e) => (e._id === updated._id ? updated : e)))
+        }
+      />
+
+      <ConfirmDeleteModal
+        employee={deleteTarget}
+        deleting={deleting}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
       />
 
       <SalarySlipModal employee={activeEmployee} onClose={() => setActiveEmployee(null)} />
