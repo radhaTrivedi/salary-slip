@@ -157,6 +157,20 @@ router.post("/reset-with-answer", async (req, res) => {
 });
 
 
+// GET /api/auth/admins - list every admin (username + when added only; never any password data)
+router.get("/admins", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    // "not employee" (rather than "== admin") so older admin records that
+    // were saved before the role field existed still show up.
+    const admins = await User.find({ role: { $ne: "employee" } })
+      .select("username createdAt")
+      .sort({ createdAt: 1 });
+    res.json(admins);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.post("/create-admin", requireAuth, requireAdmin, async (req, res) => {
   try {
     const { username, password, securityQuestion, securityAnswer } = req.body;

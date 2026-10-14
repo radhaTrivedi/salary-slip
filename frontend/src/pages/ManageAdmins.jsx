@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../api";
+import { useAuth } from "../context/AuthContext";
+import { initials } from "../lib/helpers";
 import PasswordInput from "../components/PasswordInput";
 
 export default function ManageAdmins() {
@@ -10,6 +12,25 @@ export default function ManageAdmins() {
   const [securityQuestion, setSecurityQuestion] = useState("");
   const [securityAnswer, setSecurityAnswer] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const { user } = useAuth();
+  const [admins, setAdmins] = useState([]);
+  const [adminsLoading, setAdminsLoading] = useState(true);
+  const [adminsError, setAdminsError] = useState(false);
+
+  useEffect(() => {
+    loadAdmins();
+  }, []);
+
+  function loadAdmins() {
+    setAdminsLoading(true);
+    setAdminsError(false);
+    api
+      .get("/auth/admins")
+      .then(({ data }) => setAdmins(data))
+      .catch(() => setAdminsError(true))
+      .finally(() => setAdminsLoading(false));
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -41,6 +62,7 @@ export default function ManageAdmins() {
       setConfirm("");
       setSecurityQuestion("");
       setSecurityAnswer("");
+      loadAdmins();
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not create admin");
     } finally {
@@ -116,6 +138,60 @@ export default function ManageAdmins() {
           {saving ? "Creating…" : "Create admin"}
         </button>
       </form>
+
+      <section className="mt-8">
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="font-display text-lg text-ink-900">Current admins</h2>
+          {!adminsLoading && !adminsError && (
+            <span className="text-xs text-ink-500">{admins.length} total</span>
+          )}
+        </div>
+
+        {adminsLoading ? (
+          <p className="text-sm text-ink-300">Loading admins…</p>
+        ) : adminsError ? (
+          <div className="text-sm text-ink-500 bg-paper-50 border border-paper-300 rounded-xl p-4">
+            Couldn&apos;t load the admin list.{" "}
+            <button
+              type="button"
+              onClick={loadAdmins}
+              className="font-medium text-ledger-600 hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        ) : (
+          <ul className="bg-paper-50 border border-paper-300 rounded-xl divide-y divide-paper-200 overflow-hidden">
+            {admins.map((a) => (
+              <li key={a._id} className="flex items-center gap-3 px-4 py-3">
+                <span className="w-9 h-9 shrink-0 rounded-md grid place-items-center bg-ledger-100 text-ledger-600 font-display text-sm font-semibold">
+                  {initials(a.username)}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-ink-900 truncate">
+                    {a.username}
+                    {user?.username === a.username && (
+                      <span className="ml-2 align-middle rounded-full bg-ledger-100 text-ledger-600 text-[10px] font-medium uppercase tracking-wide px-2 py-0.5">
+                        You
+                      </span>
+                    )}
+                  </p>
+                  {a.createdAt && (
+                    <p className="text-xs text-ink-500">
+                      Added{" "}
+                      {new Date(a.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
