@@ -37,7 +37,7 @@ export default function EditSalary() {
       for (const key of ["year", "basicSalary", "workingDays", "fullDays", "halfDays", "travelExpense", "pf"]) payload[key] = Number(payload[key]) || 0;
       await api.put(`/salary/${id}`, payload);
       toast.success("Salary slip updated and totals recalculated");
-      navigate("/admin/reports");
+      navigate("/");
     } catch (err) {
       toast.error(err.response?.data?.message || "Could not update salary slip");
     } finally { setSaving(false); }

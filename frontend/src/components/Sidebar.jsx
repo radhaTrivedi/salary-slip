@@ -316,14 +316,14 @@ export default function Sidebar() {
               <IconPlus /> Add admin
             </NavLink>
 
-            <NavLink
+            {/* <NavLink
               to="/admin/pf-retention"
               className={({ isActive }) =>
                 `${linkBase} ${isActive ? "bg-white/10 text-white" : "text-ink-300 hover:bg-white/5 hover:text-white"}`
               }
             >
               <IconChart /> PF Retention
-            </NavLink>
+            </NavLink> */}
             <NavLink
               to="/admin/reports"
               className={({ isActive }) =>
